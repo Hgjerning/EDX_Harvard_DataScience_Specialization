@@ -1,0 +1,244 @@
+
+---
+Author: Henrik Gjerning, Data Scientist, hgjerning@gmail.com
+Date: '2019-01-19'
+Track: Data Science
+output: pdf_document
+---
+
+Moneyball The Art of Winning an Unfair Game. That's the title of a book by Michael Lewis about the Oakland Athletics baseball team and the person tasked with building the team, their general manager, Billy Beane.
+
+Alderson began using statistical approaches to find inefficiencies in the market. Alderson was a mentor to Billy Beane, who succeeded him in 1998and fully embraced data science as opposed to scouts as a method for finding low-cost players that data predicted would help the team win.
+Today, this strategy has been adopted by most baseball teams.As we will see, regression plays a large role in this approach.
+
+### 1. Introduction to Regression
+In this section, you'll learn the basics of linear regression through this course's motivating example, the data-driven approach used to construct baseball teams. You'll also learn about correlation, the correlation coefficient, stratification, and the variance explained.
+
+
+### 1.1 introduction to Regression Overview
+In the Introduction to Regression section, you will learn the basics of linear regression.
+
+After completing this section, you will be able to:
+
+* Understand how Galton developed linear regression.
+* Calculate and interpret the sample correlation.
+* Stratify a dataset when appropriate.
+* Understand what a bivariate normal distribution is.
+* Explain what the term variance explained means.
+* Interpret the two regression lines.
+
+This section has three parts: Baseball as a Motivating Example, Correlation, and Stratification and Variance Explained. There are comprehension checks that follow most videos.
+
+
+### 1.2 Baseball as a Motivating Examples
+
+### 1.2.1 Motivating Example: MoneyBall
+This all changed with Bill James. In the late 1970s, this aspiring writer and baseball fan started publishing articles describing more in-depth analysis of baseball data. He named the approach of using data to predict what outcomes best
+predict if a team wins sabermetrics.
+Until Billy Beane made sabermetrics the center of his baseball operations, Bill James' work was mostly ignored by the baseball world. Today, pretty much every team uses the approach,
+
+The approach can be divided into two separate data analyses.
+* In the first, we determine which recorded player specific statistics predict runs.
+* In the second, we examine if players were undervalued based on what our first analysis predicts.
+
+### 1.2.2 Baseball Basics
+The goal of a baseball game is to score more runs, they're like points, than the other team.
+Each team has nine batters that bat in a predetermined order. After the ninth batter hits, we start with the first again.
+Each time they come to bat, we call it a plate appearance, PA. At each plate appearance, the other team's pitcher throws the ball and you try to hit it.
+
+Each team gets nine tries, referred to as innings, to score runs. Each inning ends after three outs, after you've failed three times.
+From these examples, we see how luck is involved in the process. When you bat you want to hit the ball hard.
+If you hit it hard enough, it's a home run, the best possible outcome as you get at least one automatic run.
+
+### 1.2.3 Bases on Balls or Stolen Bases?
+
+Here's a plot of runs per game versus home runs per game.
+The plot shows a very strong association teams with more home runs tended to score more runs.
+```{r}
+library(Lahman)
+#ds_theme_set()
+Teams <- read_csv("./data/Teams.csv")
+
+
+Teams %>% filter(yearID %in% 1961:2001) %>%
+  mutate(HR_per_game =HR/G, R_per_game = R/G) %>%
+  ggplot(aes(HR_per_game, R_per_game)) +
+  geom_point(alpha = 0.5)
+  
+```
+
+Now, let's examine the relationship between stolen bases and wins.
+Here are the runs per game plotted against stolen bases per game. Here, the relationship is not as clear.
+
+```{r}
+Teams %>% filter(yearID %in% 1961:2001) %>%
+  mutate(SB_per_game =SB/G, R_per_game = R/G) %>%
+  ggplot(aes(SB_per_game, R_per_game)) +
+  geom_point(alpha = 0.5)
+```
+
+Finally, let's examine the relationship between bases on balls and runs.
+Here are runs per game versus bases on balls per game. Although the relationship is not as strong as it was for home runs, we do see a pretty strong relationship here.
+```{r}
+Teams %>% filter(yearID %in% 1961:2001) %>%
+  mutate(BB_per_game =BB/G, R_per_game = R/G) %>%
+  ggplot(aes(BB_per_game, R_per_game)) +
+  geom_point(alpha = 0.5)
+```
+We know that, by definition, home runs cause runs, because when you hit a home run, at least one run will score.
+Now it could be that home runs also cause the bases on balls.
+If you understand the game, you will agree with me that that could be the case.
+So it might appear that a base on ball is causing runs, when in fact, it's home runs that's causing both.
+This is called confounding.
+
+Question 1:
+You want to know whether teams with more at-bats per game have more runs per game. What R code below correctly makes a scatter plot for this relationship?
+```{r}
+Teams %>% filter(yearID %in% 1961:2001 ) %>%
+    ggplot(aes(AB, R)) + 
+    geom_point(alpha = 0.5)
+```
+```{r}
+Teams %>% filter(yearID %in% 1961:2001 ) %>%
+    mutate(AB_per_game = AB/G, R_per_game = R/G) %>%
+    ggplot(aes(AB_per_game, R_per_game)) + 
+    geom_point(alpha = 0.5)
+```
+
+Correct: Correct. This makes a scatter plot of runs per game (y-axis) vs. at-bats per game (x-axis).
+
+
+
+
+```{r}
+Teams %>% filter(yearID %in% 1961:2001 ) %>%
+    mutate(AB_per_game = AB/G, R_per_game = R/G) %>%
+    ggplot(aes(AB_per_game, R_per_game)) + 
+    geom_line()
+
+
+```
+
+
+### 1.3 Correlation
+
+We have access to Galton's family data through the HistData package.
+HistData stands for historical data. We'll create a data set with the heights of fathers and the first sons.
+
+```{r}
+library(HistData)
+data("GaltonFamilies")
+galton_heights <- GaltonFamilies %>%
+  filter(childNum == 1 & gender == 'male') %>%
+  select(father, childHeight) %>%
+  rename(son = childHeight)
+
+```
+
+```{r}
+galton_heights %>%
+    summarize(mean(father), sd(father), mean(son), sd(son))
+```
+However, this summary fails to describe a very important characteristic of the data that you can see in this figure.
+The trend that the taller the father, the taller the son,
+```{r}
+galton_heights %>% ggplot(aes(father, son)) +
+  geom_point(alpha = 0.5)
+```
+
+### 1.3.1 Correlation
+
+### 1.3.2 Correlation Coefficient
+
+
+
+
+
+
+### 1.3.3 Sample Correlation is a Random Variable
+
+
+
+### 1.4 Stratification and Variance Explained
+
+### 1.4.1 Anscombe's Quartet/Stratification
+
+### 1.4.2 Bivariate Normal Distribution
+
+### 1.4.3 Variance Explained
+
+### 1.4.4 There are two Regression Lines
+
+
+
+### 2. Linear Models
+In this section, you'll learn about linear models. You'll learn about least squares estimates, multivariate regression, and several useful features of R, such as tibbles, lm, do, and broom. You'll learn how to apply regression to baseball to build a better offensive metric.
+
+### 2.1 Linear Models Overview
+
+### 2.2 Introduction to Linear models
+
+### 2.2.1 Confounding: Are BBs More Predictive?
+
+### 2.2.2 Stratification and Multivariate Regression
+
+### 2.2.3 Linear Models
+
+
+### 2.3 Least Squares Estimates
+
+### 2.3.1 Least Squares Estimates (LSE)
+
+### 2.3.2 The lm function
+
+### 2.3.3 LSE are Random Variables
+
+### 2.3.4 Advanced notes on LSE
+
+### 2.3.5 Predcted Variables are Random Variables
+
+
+### 2.4 Tibles, do and broom
+
+### 2.4.1 Advanced dplyr: Tibbles
+
+### 2.4.2 Tibbles: Differences from Data Frames
+
+### 2.4.3 do
+
+### 2.4.4 broom
+
+
+### 2.5 Regression and Baseball
+
+### 2.5.1 Building a better Offensive Metric for Baseball
+
+### 2.5.2 Building a better Offensive Metric for Baseball: Linear  Regression
+
+### 2.5.3 On Base Plus Slugging (OPS)
+
+### 2.5.4 Regression Fallacy
+
+### 2.5.5 Measurement Error Models
+
+
+
+
+
+### 3. Confounding
+In the final section of the course, you'll learn about confounding and several reasons that correlation is not the same as causation, such as spurious correlation, outliers, reversing cause and effect, and confounders. You'll also learn about Simpson's Paradox.
+
+### 3.1 Confounding Overview
+
+### 3.2 Correlation is not Causation
+
+### 3.2.1 Correlation is not Causation: Spurious Correlation
+
+### 3.2.2 Correlation is not Causation: Outliers
+
+### 3.2.3 Correlation is not Causation: Reversing Cause Effect
+
+### 3.2.4 Correlation is not Causation: Confounders
+
+### 3.2.5 Simpson's Paradox
+

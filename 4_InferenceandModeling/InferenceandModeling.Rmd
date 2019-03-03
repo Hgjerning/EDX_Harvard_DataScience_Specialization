@@ -1,0 +1,250 @@
+---
+title: "Data Science: Inference and Modeling"
+subtitle: ""
+author: "H. Gjerning"
+date: "Jun, 2018"
+output:
+  pdf_document: default
+  html_document: default
+data: null
+# Source: "https://courses.edx.org/courses/course-v1:HarvardX+PH125.4x+1T2018/progress"
+# Destination: "C:\Users\dell2013\Documents\artData\Edx\Harvard\Spec_DataScience\4_InferenceandModeling"
+---
+
+### I. Introduction
+
+
+
+### II. Data preparation: collection and loading
+```{r setup, cache = F, echo = F, message = F, warning = F, tidy = F, fig_caption = T}
+
+rm(list = ls()) # clears the global environment
+setwd("~/artData/Edx/HArvard/Spec_DataScience/4_InferenceandModeling")
+
+```
+
+Next, you will need to install several packages which are required for collecting near real-time tweets and load them into the workspace.
+```{r}
+# Define the dependency packages we need.
+required.packs = c("ggplot2")
+        
+
+# Install the required packages if missing, then load them.
+sapply(required.packs, function(pack) {
+  if(!(pack %in% installed.packages())) {install.packages(pack)}
+  require(pack, character.only=TRUE)
+})
+
+print("Dependencies met [OK]")
+
+```
+####################################################################################
+#
+#  Module 1: Parameters and Estimates
+#
+####################################################################################
+
+## 1.1 Parameters and Estimates
+
+Exercise 1. Polling - expected value of S
+Suppose you poll a population in which a proportion p of voters are Democrats and 1???p are Republicans. Your sample size is N=25. Consider the random variable S, which is the total number of Democrats in your sample.
+
+What is the expected value of this random variable S?
+Answer: E(S)=25p
+
+
+Exercise 2. Polling - standard error of S
+Again, consider the random variable S, which is the total number of Democrats in your sample of 25 voters. The variable p describes the proportion of Democrats in the sample, whereas 1???p describes the proportion of Republicans.
+
+What is the standard error of S?
+SE(S)=25p(1???p)???????????????????????????
+
+
+Exercise 3. Polling - expected value of X-bar
+Consider the random variable S/N, which is equivalent to the sample average that we have been denoting as X¯. The variable N represents the sample size and p is the proportion of Democrats in the population.
+
+What is the expected value of X¯?
+E(X¯)=p
+
+
+Exercise 4. Polling - standard error of X-bar
+What is the standard error of the sample average, X¯?
+
+The variable N represents the sample size and p is the proportion of Democrats in the population.
+SE(X¯)=p(1???p)/N??????????????????????????????
+
+
+```{r}
+# Exercise 5. se versus p
+
+# `N` represents the number of people polled
+N <- 25
+
+# Create a variable `p` that contains 100 proportions ranging from 0 to 1 using the `seq` function
+p <- seq(0, 1, length = 100)
+
+# Create a variable `se` that contains the standard error of each sample average
+se <- sqrt(p*(1-p)/N)
+
+# Plot `p` on the x-axis and `se` on the y-axis
+plot(p, se)
+```
+
+```{r}
+# Exercise 6. Multiple plots of se versus p
+
+# The vector `p` contains 100 proportions of Democrats ranging from 0 to 1 using the `seq` function
+p <- seq(0, 1, length = 100)
+
+# The vector `sample_sizes` contains the three sample sizes
+sample_sizes <- c(25, 100, 1000)
+
+# Write a for-loop that calculates the standard error `se` for every value of `p` for each of the three samples sizes `N` in the vector `sample_sizes`. Plot the three graphs, using the `ylim` argument to standardize the y-axis across all three plots.
+for(N in sample_sizes){
+  se <- sqrt(p*(1-p)/N)
+  plot(p, se, ylim = c(0,0.5/sqrt(25)))
+}
+```
+
+Exercise 7. Expected value of d
+Our estimate for the difference in proportions of Democrats and Republicans is d=X¯???(1???X¯).
+
+Which derivation correctly uses the rules we learned about sums of random variables and scaled random variables to derive the expected value of d?
+
+E[X¯???(1???X¯)]=E[2X¯???1] =2E[X¯]???1 =2p???1 =p???(1???p)
+
+Exercise 8. Standard error of d
+Our estimate for the difference in proportions of Democrats and Republicans is d=X¯???(1???X¯).
+
+Which derivation correctly uses the rules we learned about sums of random variables and scaled random variables to derive the standard error of d?
+
+SE[X¯???(1???X¯)]=SE[2X¯???1] =2SE[X¯] =2p(1???p)/N??????????????????????????????
+
+
+```{r}
+# Exercise 9. Standard error of the spread
+
+# `N` represents the number of people polled
+N <- 25
+
+# `p` represents the proportion of Democratic voters
+p <- 0.45
+
+# Calculate the standard error of the spread. Print this value to the console.
+2*sqrt(p*(1-p)/N)
+```
+
+Exercise 10. Sample size
+So far we have said that the difference between the proportion of Democratic voters and Republican voters is about 10% and that the standard error of this spread is about 0.2 when N=25. Select the statement that explains why this sample size is sufficient or not.
+
+This sample size is too small because the standard error is larger than the spread.
+
+
+
+####################################################################################
+#
+#  Module 2: The Central Limit Theorem in Practice
+#
+####################################################################################
+In Section 2, you will look at the Central Limit Theorem in practice.
+
+After completing Section 2, you will be able to:
+
+Use the Central Limit Theorem to calculate the probability that a sample estimate  is close to the population proportion .
+Run a Monte Carlo simulation to corroborate theoretical results built using probability theory.
+Estimate the spread based on estimates of  and .
+Understand why bias can mean that larger sample sizes aren't necessarily better.
+There is 1 assignment that uses the DataCamp platform for you to practice your coding skills.
+
+We encourage you to use R to interactively test out your answers and further your learning.
+
+## 2.1 Central Limit Theorem in Practice
+
+
+```{r}
+
+
+```
+
+## 2.2 Customizing Plots
+
+
+
+
+
+####################################################################################
+#
+#  Module 3: Confidence Intervals and p-Values
+#
+####################################################################################
+
+## 3.1 Confidence Intervals and p-Values
+
+
+```{r}
+
+
+```
+
+
+
+
+
+
+
+####################################################################################
+#
+#  Module 4: Statistical Models
+#
+####################################################################################
+
+## 4.1 Statistical Models
+
+
+```{r}
+
+
+```
+
+
+
+
+
+
+####################################################################################
+#
+#  Module 5: Bayesian Statistics
+#
+####################################################################################
+
+## 5.1 Bayesian Statistics
+
+
+
+```{r}
+
+
+```
+
+
+####################################################################################
+#
+#  Module 6: Election Forecasting
+#
+####################################################################################
+
+## 6.1 Election Forecasting 
+
+
+
+
+####################################################################################
+#
+#  Module 7: Association Tests
+#
+####################################################################################
+
+## 7.1 Association Tests
+
+
+

@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1551606386295.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2606629012",
+    "id" : "BB78EF91",
+    "lastKnownWriteTime" : 1551606831,
+    "last_content_update" : 1551606831586,
+    "path" : "C:/Users/Henrik/OneDrive - Rude Consulting/Education/MOOC/EDX/Harvard/Spec_DataScience/5_ProductivityTools/ProductivityTools/wrangle-data.R",
+    "project_path" : "wrangle-data.R",
+    "properties" : {
+        "cursorPosition" : "3,39",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

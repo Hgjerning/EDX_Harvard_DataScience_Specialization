@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1551606035969.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "78D37366",
+    "lastKnownWriteTime" : 1551606223,
+    "last_content_update" : 1551606223814,
+    "path" : "C:/Users/Henrik/OneDrive - Rude Consulting/Education/MOOC/EDX/Harvard/Spec_DataScience/5_ProductivityTools/ProductivityTools/download-data.R",
+    "project_path" : "download-data.R",
+    "properties" : {
+        "cursorPosition" : "2,40",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

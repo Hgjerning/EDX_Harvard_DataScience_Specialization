@@ -1,0 +1,20 @@
+Title: Data Science: Productivity Tools
+Track: Applied Finance
+Author: Rafael Irizarry, Professor of Biostatistics, Harvard University
+Date: 2019-01-15
+Course Provider: EDX
+
+# 0. Introduction
+
+* 1. be systematic when organizing your filesystem
+* 2. automate when possible
+* 3. minimize the use of the mouse
+
+Shortcuts:
+
+* new script: Ctrl-Shift-N
+
+```{r}
+installed.packages()
+```
+
